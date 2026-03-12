@@ -20,12 +20,6 @@ print(df.dtypes)
 print(df.isna().sum())
 print(df[df.isna().any(axis=1)])
 
-# TODO: Hay que buscar la info a ver si la encontramos, eliminar o imputar es algo que en este caso puede afectar a el futuro análisis
-# Rating se puede coger esas 3 y votos
-# Pero los views y el numero de votos, no, porque estos datos son de 2016 y se ve muy afectada si los cogemos de 2026. Si decidimos actualizar la columna "us_viewers_in_millions" hay que cogerlo todo
-# ver varianza para hacer un calculo de cuanto ha variado los votos en 2016 a ahora 2026 y asi poner un numero adecuado.
-
-# Se puede actualizar todo el dataset
 
 #Nos quedamos con las primeras 27 temporadas de los Simpson completas
 df = df[df["season"] != 28]
