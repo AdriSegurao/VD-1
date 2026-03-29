@@ -27,7 +27,7 @@ The dashboard is titled **The decline of The Simpsons** and includes:
 Install the required libraries in your environment:
 
 ```bash
-pip install streamlit pandas altair
+pip install streamlit pandas altair numpy
 ```
 
 Launch the dashboard with:

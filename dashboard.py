@@ -10,6 +10,8 @@ INPUT_FILE = Path("simpsons_episodes_clean.csv")
 df = pd.read_csv(INPUT_FILE)
 
 
+
+################################ CHARTS ################################
 def correlation_chart():
     corr = df["imdb_rating"].corr(df["us_viewers_in_millions"])
 
@@ -53,9 +55,9 @@ def correlation_chart():
 
     return (chart + trend + corr_text).properties(
         title="Correlation between ratings and viewers",
-        width=520,
-        height=420,
-    ).configure_title(fontSize=20, anchor="middle")
+        width=650,
+        height=250,
+    ).configure_title(fontSize=16, anchor="middle")
 
 
 def weekday_viewers_boxplot():
@@ -71,9 +73,9 @@ def weekday_viewers_boxplot():
         y=alt.Y("us_viewers_in_millions:Q", title="US viewers (millions)"),
     ).properties(
         title="US viewers by weekday aired",
-        width=520,
-        height=240,
-    ).configure_title(fontSize=18, anchor="middle")
+        width=650,
+        height=200,
+    ).configure_title(fontSize=15, anchor="middle")
 
 
 def weekday_numepisodes_bar():
@@ -94,9 +96,9 @@ def weekday_numepisodes_bar():
         ],
     ).properties(
         title="Number of episodes by weekday",
-        width=520,
-        height=240,
-    ).configure_title(fontSize=18, anchor="middle")
+        width=650,
+        height=200,
+    ).configure_title(fontSize=15, anchor="middle")
 
 
 def viewers_heatmap():
@@ -118,23 +120,20 @@ def viewers_heatmap():
             "us_viewers_in_millions:Q",
             title="US viewers (millions)",
             scale=alt.Scale(scheme="cividis"),
-        )
-    )
-
-    text = base.mark_text(fontSize=9, fontWeight="bold").encode(
-        text=alt.Text("us_viewers_in_millions:Q", format=".1f"),
-        color=alt.condition(
-            alt.datum.us_viewers_in_millions > 18,
-            alt.value("black"),
-            alt.value("white"),
         ),
+        tooltip=[
+            alt.Tooltip("season:O", title="Season"),
+            alt.Tooltip("number_in_season:O", title="Episode"),
+            alt.Tooltip("title:N", title="Title"),
+            alt.Tooltip("us_viewers_in_millions:Q", title="US viewers", format=".1f"),
+        ],
     )
 
-    return (heatmap + text).properties(
-        width=540,
-        height=680,
+    return heatmap.properties(
+        width=650,
+        height=360,
         title="US viewers per episode across seasons",
-    ).configure_title(fontSize=20, anchor="middle")
+    ).configure_title(fontSize=16, anchor="middle")
 
 
 def ratings_heatmap():
@@ -144,7 +143,11 @@ def ratings_heatmap():
             title="Season",
             axis=alt.Axis(labelAngle=0, orient="top"),
         ),
-        y=alt.Y("number_in_season:O", title="Episode number", sort="ascending"),
+        y=alt.Y(
+            "number_in_season:O",
+            title="Episode number",
+            sort="ascending",
+        ),
     )
 
     heatmap = base.mark_rect(cornerRadius=6).encode(
@@ -155,23 +158,20 @@ def ratings_heatmap():
                 domain=["< 5", "5.0 - 5.9", "6.0 - 6.9", "7.0 - 7.9", "8.0 - 8.9", "9.0 - 10.0"],
                 range=["#780000", "#D73939", "#d47336", "#f9ec5f", "#3dbd3d", "#005800"],
             ),
-        )
-    )
-
-    text = base.mark_text(fontSize=11, fontWeight="bold").encode(
-        text=alt.Text("imdb_rating:Q", format=".1f"),
-        color=alt.condition(
-            (alt.datum.imdb_rating >= 9) | (alt.datum.imdb_rating <= 5.9),
-            alt.value("white"),
-            alt.value("black"),
         ),
+        tooltip=[
+            alt.Tooltip("season:O", title="Season"),
+            alt.Tooltip("number_in_season:O", title="Episode"),
+            alt.Tooltip("title:N", title="Title"),
+            alt.Tooltip("imdb_rating:Q", title="IMDb rating", format=".1f"),
+        ],
     )
 
-    return (heatmap + text).properties(
-        width=540,
-        height=680,
+    return heatmap.properties(
+        width=650,
+        height=360,
         title="IMDb episode ratings by season",
-    ).configure_title(fontSize=20, anchor="middle")
+    ).configure_title(fontSize=16, anchor="middle")
 
 
 def viewers_boxplot():
@@ -234,9 +234,9 @@ def viewers_boxplot():
 
     return (chart_box + chart_line + mean_rule + labels).properties(
         title="Distribution of viewers by season",
-        width=520,
-        height=320,
-    ).configure_title(fontSize=20, anchor="middle")
+        width=650,
+        height=250,
+    ).configure_title(fontSize=16, anchor="middle")
 
 
 def ratings_boxplot():
@@ -299,15 +299,17 @@ def ratings_boxplot():
 
     return (chart_box + chart_line + mean_rule + labels).properties(
         title="Distribution of IMDb ratings by season",
-        width=520,
-        height=320,
-    ).configure_title(fontSize=20, anchor="middle")
+        width=650,
+        height=250,
+    ).configure_title(fontSize=16, anchor="middle")
 
 
+
+################################ STREAMLIT CONFIG ################################
 def render_chart(chart):
-    _, center, _ = st.columns([0.06, 0.88, 0.06])
+    _, center, _ = st.columns([0.005, 0.99, 0.005])
     with center:
-        st.altair_chart(chart, width="stretch")
+        st.altair_chart(chart, width="content")
 
 
 def boxed_container(*, key=None, border=True):
@@ -326,18 +328,14 @@ def main():
         layout="wide",
     )
 
-    st.markdown(
+    st.markdown( ################ Border 0 for weekday-charts-box
         """
         <style>
         .block-container {
             padding-top: 1rem;
         }
-        h1 {
-            margin-top: 0;
-            padding-top: 0;
-        }
         .st-key-weekday-charts-box {
-            border: 2px solid rgba(49, 51, 63, 0.35);
+            border: 0px solid rgba(49, 51, 63, 0.35);
             border-radius: 0.75rem;
             padding: 0.75rem 0.35rem;
         }
@@ -346,13 +344,17 @@ def main():
             border-top: 1px solid rgba(49, 51, 63, 0.25);
             margin: 0.5rem 1rem 1rem 1rem;
         }
+        .st-key-heatmaps-row {
+            margin-top: -0.75rem;
+        }
         </style>
         """,
         unsafe_allow_html=True,
     )
 
-    st.title("The decline of The Simpsons")
-    st.markdown("<div style='height: 1.5rem;'></div>", unsafe_allow_html=True)
+    st.markdown("<div style='height: 0.35rem;'></div>", unsafe_allow_html=True)
+    st.subheader("The decline of The Simpsons")
+    st.markdown("<div style='height: 0.15rem;'></div>", unsafe_allow_html=True)
 
     top_left, top_right = st.columns(2, gap="large")
     with top_left:
@@ -360,11 +362,12 @@ def main():
     with top_right:
         render_chart(ratings_boxplot())
 
-    middle_left, middle_right = st.columns(2, gap="large")
-    with middle_left:
-        render_chart(viewers_heatmap())
-    with middle_right:
-        render_chart(ratings_heatmap())
+    with boxed_container(key="heatmaps-row", border=False):
+        middle_left, middle_right = st.columns(2, gap="large")
+        with middle_left:
+            render_chart(viewers_heatmap())
+        with middle_right:
+            render_chart(ratings_heatmap())
 
     bottom_left, bottom_right = st.columns(2, gap="large")
     with bottom_left:
