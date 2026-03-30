@@ -52,7 +52,26 @@ def correlation_chart():
         text="label:N",
     )
 
-    return (chart + trend + corr_text).properties(
+    takeaway_text = alt.Chart(
+        pd.DataFrame(
+            {
+                "x": [4.25],
+                "y": [29.8],
+                "label": ["Episodes with higher ratings tend to attract more viewers."],
+            }
+        )
+    ).mark_text(
+        align="left",
+        baseline="top",
+        fontSize=12,
+        color="#555",
+    ).encode(
+        x="x:Q",
+        y="y:Q",
+        text="label:N",
+    )
+
+    return (chart + trend + corr_text + takeaway_text).properties(
         title="Correlation between ratings and viewers",
         width=650,
         height=400,
@@ -242,7 +261,7 @@ def viewers_boxplot():
     return (chart_box + chart_line + mean_rule + labels).properties(
         title="Distribution of viewers by season",
         width=650,
-        height=400,
+        height=350,
     ).configure_title(fontSize=16, anchor="middle")
 
 
@@ -307,7 +326,7 @@ def ratings_boxplot():
     return (chart_box + chart_line + mean_rule + labels).properties(
         title="Distribution of IMDb ratings by season",
         width=650,
-        height=400,
+        height=350,
     ).configure_title(fontSize=16, anchor="middle")
 
 
