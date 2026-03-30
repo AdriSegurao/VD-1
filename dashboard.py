@@ -55,7 +55,7 @@ def correlation_chart():
     return (chart + trend + corr_text).properties(
         title="Correlation between ratings and viewers",
         width=650,
-        height=350,
+        height=400,
     ).configure_title(fontSize=16, anchor="middle")
 
 
@@ -66,7 +66,7 @@ def weekday_viewers_boxplot():
         x=alt.X(
             "weekday:N",
             sort=weekday_order,
-            title="Weekday aired",
+            title=None,
             axis=alt.Axis(labelAngle=0),
         ),
         y=alt.Y("us_viewers_in_millions:Q", title="US viewers (millions)"),
@@ -242,7 +242,7 @@ def viewers_boxplot():
     return (chart_box + chart_line + mean_rule + labels).properties(
         title="Distribution of viewers by season",
         width=650,
-        height=350,
+        height=400,
     ).configure_title(fontSize=16, anchor="middle")
 
 
@@ -307,7 +307,7 @@ def ratings_boxplot():
     return (chart_box + chart_line + mean_rule + labels).properties(
         title="Distribution of IMDb ratings by season",
         width=650,
-        height=350,
+        height=400,
     ).configure_title(fontSize=16, anchor="middle")
 
 
@@ -341,11 +341,6 @@ def main():
         .block-container {
             padding-top: 1rem;
         }
-        .st-key-weekday-charts-box {
-            border: 0.5px solid rgba(49, 51, 63, 0.35);
-            border-radius: 1rem;
-            padding: 0.45rem 0.45rem 0.2rem 0.45rem;
-        }
         .st-key-heatmaps-row {
             margin-top: -1.5rem;
         }
@@ -373,8 +368,7 @@ def main():
 
     bottom_left, bottom_right = st.columns(2, gap="large")
     with bottom_left:
-        with boxed_container(key="weekday-charts-box", border=False):
-            st.altair_chart(weekday_patterns_panel(), width="content")
+        st.altair_chart(weekday_patterns_panel(), width="content")
     with bottom_right:
         render_chart(correlation_chart())
 
