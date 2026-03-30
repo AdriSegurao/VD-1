@@ -10,7 +10,6 @@ INPUT_FILE = Path("simpsons_episodes_clean.csv")
 df = pd.read_csv(INPUT_FILE)
 
 
-
 ################################ CHARTS ################################
 def correlation_chart():
     corr = df["imdb_rating"].corr(df["us_viewers_in_millions"])
@@ -56,12 +55,12 @@ def correlation_chart():
     return (chart + trend + corr_text).properties(
         title="Correlation between ratings and viewers",
         width=650,
-        height=250,
+        height=350,
     ).configure_title(fontSize=16, anchor="middle")
 
 
 def weekday_viewers_boxplot():
-    weekday_order = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]   
+    weekday_order = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
 
     return alt.Chart(df).mark_boxplot(size=36).encode(
         x=alt.X(
@@ -72,15 +71,14 @@ def weekday_viewers_boxplot():
         ),
         y=alt.Y("us_viewers_in_millions:Q", title="US viewers (millions)"),
     ).properties(
-        title="US viewers by weekday aired",
-        width=650,
-        height=200,
-    ).configure_title(fontSize=15, anchor="middle")
+        width=550,
+        height=150,
+    )
+
 
 
 def weekday_numepisodes_bar():
-
-    weekday_order = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]   
+    weekday_order = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
 
     return alt.Chart(df).mark_bar().encode(
         x=alt.X(
@@ -95,10 +93,19 @@ def weekday_numepisodes_bar():
             alt.Tooltip("count():Q", title="Episodes"),
         ],
     ).properties(
-        title="Number of episodes by weekday",
-        width=650,
-        height=200,
-    ).configure_title(fontSize=15, anchor="middle")
+        width=550,
+        height=150,
+    )
+
+
+def weekday_patterns_panel():
+    return alt.vconcat(
+        weekday_viewers_boxplot(),
+        weekday_numepisodes_bar(),
+        spacing=26,
+    ).properties(
+        title="Broadcast patterns by weekday",
+    ).configure_title(fontSize=16, anchor="middle")
 
 
 def viewers_heatmap():
@@ -235,7 +242,7 @@ def viewers_boxplot():
     return (chart_box + chart_line + mean_rule + labels).properties(
         title="Distribution of viewers by season",
         width=650,
-        height=250,
+        height=350,
     ).configure_title(fontSize=16, anchor="middle")
 
 
@@ -300,7 +307,7 @@ def ratings_boxplot():
     return (chart_box + chart_line + mean_rule + labels).properties(
         title="Distribution of IMDb ratings by season",
         width=650,
-        height=250,
+        height=350,
     ).configure_title(fontSize=16, anchor="middle")
 
 
@@ -328,24 +335,19 @@ def main():
         layout="wide",
     )
 
-    st.markdown( ################ Border 0 for weekday-charts-box
+    st.markdown(
         """
         <style>
         .block-container {
             padding-top: 1rem;
         }
         .st-key-weekday-charts-box {
-            border: 0px solid rgba(49, 51, 63, 0.35);
-            border-radius: 0.75rem;
-            padding: 0.75rem 0.35rem;
-        }
-        .st-key-weekday-charts-box hr {
-            border: 2px solid rgba(49, 51, 63, 0.35);
-            border-top: 1px solid rgba(49, 51, 63, 0.25);
-            margin: 0.5rem 1rem 1rem 1rem;
+            border: 0.5px solid rgba(49, 51, 63, 0.35);
+            border-radius: 1rem;
+            padding: 0.45rem 0.45rem 0.2rem 0.45rem;
         }
         .st-key-heatmaps-row {
-            margin-top: -0.75rem;
+            margin-top: -1.5rem;
         }
         </style>
         """,
@@ -372,9 +374,7 @@ def main():
     bottom_left, bottom_right = st.columns(2, gap="large")
     with bottom_left:
         with boxed_container(key="weekday-charts-box", border=False):
-            render_chart(weekday_viewers_boxplot())
-            st.markdown("<hr>", unsafe_allow_html=True)
-            render_chart(weekday_numepisodes_bar())
+            st.altair_chart(weekday_patterns_panel(), width="content")
     with bottom_right:
         render_chart(correlation_chart())
 
