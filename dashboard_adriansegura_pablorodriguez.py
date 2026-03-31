@@ -372,12 +372,15 @@ def main():
     st.subheader("The decline of The Simpsons")
     st.markdown("<div style='height: 0.15rem;'></div>", unsafe_allow_html=True)
 
+
+    # Viewers and ratings boxplots
     top_left, top_right = st.columns(2, gap="large")
     with top_left:
         render_chart(viewers_boxplot())
     with top_right:
         render_chart(ratings_boxplot())
 
+    # Viewers and ratings heatmaps
     with boxed_container(key="heatmaps-row", border=False):
         middle_left, middle_right = st.columns(2, gap="large")
         with middle_left:
@@ -385,11 +388,17 @@ def main():
         with middle_right:
             render_chart(ratings_heatmap())
 
+    # Weekday vs viewers and correlation charts
     bottom_left, bottom_right = st.columns(2, gap="large")
     with bottom_left:
         st.altair_chart(weekday_patterns_panel(), width="content")
     with bottom_right:
         render_chart(correlation_chart())
+
+    # About section
+    with st.expander("About"):
+        st.write("Data Visualization MDS - First practical work")
+        st.write("Authors: Adrian Segura and Pablo Rodriguez")
 
 
 if __name__ == "__main__":
